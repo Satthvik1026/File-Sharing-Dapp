@@ -1,3 +1,83 @@
+import { useState } from "react";
+import "./Display.css";
+
+const Display = ({ contract, account }) => {
+    const [data, setData] = useState([]);
+    const [inputAddress, setInputAddress] = useState("");
+
+    const getData = async () => {
+        try {
+            const addressToUse = inputAddress.trim() ? inputAddress : account;
+            const files = await contract.display(addressToUse);
+
+            if (!files || files.length === 0) {
+                alert("No files to display");
+                return;
+            }
+
+            const fileElements = files.map((file, i) => {
+                const fileCID = file.url.substring(7); // Remove "ipfs://" prefix
+                const fileUrl = `https://gateway.pinata.cloud/ipfs/${fileCID}`;
+
+                if (file.fileType.startsWith("image")) {
+                    return (
+                        <div key={i} className="image-container">
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <img src={fileUrl} alt="uploaded" />
+                            </a>
+                        </div>
+                    );
+                }
+
+                if (file.fileType.startsWith("video")) {
+                    return (
+                        <div key={i} className="video-container">
+                            <video controls src={fileUrl}></video>
+                        </div>
+                    );
+                }
+
+                if (file.fileType.startsWith("application/pdf")) {
+                    return (
+                        <div key={i} className="file-item">
+                            📄 <a href={fileUrl} target="_blank" rel="noopener noreferrer">PDF File</a>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div key={i} className="file-item">
+                        📎 <a href={fileUrl} target="_blank" rel="noopener noreferrer">Download File</a>
+                    </div>
+                );
+            });
+
+            setData(fileElements);
+        } catch (e) {
+            console.error("Error fetching data:", e);
+            alert("You don't have access or an error occurred");
+        }
+    };
+
+    return (
+        <>
+            <div className="file-list">{data}</div>
+            <input
+                type="text"
+                placeholder="Enter Address"
+                className="address"
+                value={inputAddress}
+                onChange={(e) => setInputAddress(e.target.value)}
+            />
+            <button className="center button" onClick={getData}>Get Data</button>
+        </>
+    );
+};
+
+export default Display;
+
+
+
 // import { useState } from "react";
 // import "./Display.css";
 // const Display = ({ contract, account }) => {
@@ -49,50 +129,57 @@
 // export default Display;
 
 
-import { useState } from "react";
-import "./Display.css";
+//..................................................................................................................
 
-const Display = ({ contract, account }) => {
-    const [data, setData] = useState([]);
-    const [inputAddress, setInputAddress] = useState("");
+// import { useState } from "react";
+// import "./Display.css";
 
-    const getData = async () => {
-        let dataArray;
-        try {
-            const addressToUse = inputAddress.trim() ? inputAddress : account;
-            dataArray = await contract.display(addressToUse);
+// const Display = ({ contract, account }) => {
+//     const [data, setData] = useState([]);
+//     const [inputAddress, setInputAddress] = useState("");
 
-            if (!dataArray || dataArray.length === 0) {
-                alert("No image to display");
-                return;
-            }
+//     const getData = async () => {
+//         let dataArray;
+//         try {
+//             const addressToUse = inputAddress.trim() ? inputAddress : account;
+//             dataArray = await contract.display(addressToUse);
 
-            const images = dataArray.map((item, i) => (
-                <a href={`https://gateway.pinata.cloud/ipfs/${item.substring(7)}`} key={i} target="_blank" rel="noopener noreferrer">
-                    <img src={`https://gateway.pinata.cloud/ipfs/${item.substring(7)}`} alt="uploaded" className="image-list" />
-                </a>
-            ));
+//             if (!dataArray || dataArray.length === 0) {
+//                 alert("No image to display");
+//                 return;
+//             }
 
-            setData(images);
-        } catch (e) {
-            console.error("Error fetching data:", e);
-            alert("You don't have access or an error occurred");
-        }
-    };
+//             const images = dataArray.map((item, i) => (
+//                 <a href={`https://gateway.pinata.cloud/ipfs/${item.substring(7)}`} key={i} target="_blank" rel="noopener noreferrer">
+//                     <img src={`https://gateway.pinata.cloud/ipfs/${item.substring(7)}`} alt="uploaded" className="image-list" />
+//                 </a>
+//             ));
 
-    return (
-        <>
-            <div className="image-list">{data}</div>
-            <input
-                type="text"
-                placeholder="Enter Address"
-                className="address"
-                value={inputAddress}
-                onChange={(e) => setInputAddress(e.target.value)}
-            />
-            <button className="center button" onClick={getData}>Get Data</button>
-        </>
-    );
-};
+//             setData(images);
+//         } catch (e) {
+//             console.error("Error fetching data:", e);
+//             alert("You don't have access or an error occurred");
+//         }
+//     };
 
-export default Display;
+//     return (
+//         <>
+//             <div className="image-list">{data}</div>
+//             <input
+//                 type="text"
+//                 placeholder="Enter Address"
+//                 className="address"
+//                 value={inputAddress}
+//                 onChange={(e) => setInputAddress(e.target.value)}
+//             />
+//             <button className="center button" onClick={getData}>Get Data</button>
+//         </>
+//     );
+// };
+
+// export default Display;
+
+//..........................................................................................................................
+
+
+
