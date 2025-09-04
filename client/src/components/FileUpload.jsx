@@ -113,9 +113,13 @@ const FileUpload = ({ account, contract }) => {
                 alert("Successfully Uploaded to Blockchain!");
                 setFileName("No file selected");
                 setFile(null);
+
             } catch (error) {
                 alert("Upload failed. Make sure your Pinata keys are set correctly.");
                 console.error("Upload failed", error);
+                console.log("Pinata Key:", import.meta.env.VITE_PINATA_API_KEY);
+                console.log("Pinata Secret:", import.meta.env.VITE_PINATA_SECRET_API_KEY);
+
             }
         }
     };
